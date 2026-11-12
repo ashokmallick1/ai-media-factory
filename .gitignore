@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+*.db
+*.sqlite3
+
+# Node / Frontend
+frontend/node_modules/
+node_modules/
+frontend/dist/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Media Storage & Temporary Renders
+storage/output/
+storage/*.mp4
+storage/*.wav
+*.mp4
+*.wav
+
+# OS & Environment
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.env
+.env.local
