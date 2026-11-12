@@ -1,3 +1,23 @@
+export interface LocalizedEdition {
+  master_video_url: string;
+  social_video_url: string;
+}
+
+export interface PlayableEpisode {
+  id: string;
+  title: string;
+  studio_type: string;
+  language: string;
+  available_languages?: string[];
+  channel_name: string;
+  description: string;
+  views: string;
+  duration: number;
+  master_video_url: string;
+  social_video_url: string;
+  localized_versions?: Record<string, LocalizedEdition>;
+}
+
 export interface Studio {
   id: string;
   name: string;

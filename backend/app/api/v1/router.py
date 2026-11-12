@@ -1,13 +1,15 @@
 import os
+import json
 import uuid
 from typing import List, Dict, Any, Optional
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, Query
 from sqlalchemy.orm import Session
 from backend.app.core.database import get_db, engine, Base
 from backend.app.models.schema import Brand, Character, VoiceProfile, Project, Episode, ProductionJob
 from backend.app.schemas.api import BrandCreate, CharacterCreate, EpisodeCreateRequest, ProductionRunResponse
 from backend.app.orchestration.graph import ProductionOrchestrator
 from backend.app.orchestration.state import ProductionState
+from backend.app.orchestration.localization import ModeALocalizationEngine
 
 # Ensure database tables exist
 Base.metadata.create_all(bind=engine)
@@ -251,29 +253,69 @@ def list_episodes():
                 social_file = f
 
         if master_file:
-            meta = meta_map.get(ep_id, {
-                "title": ep_id.replace("_", " ").title(),
-                "studio_type": "entertainment",
-                "language": "or",
-                "channel_name": "AI Media Factory",
-                "description": "Autonomously produced episode by AI Media Factory OS.",
-                "views": "1.2K views",
-                "duration": 15.0
-            })
+            meta_file = os.path.join(ep_path, "metadata.json")
+            meta = None
+            if os.path.exists(meta_file):
+                try:
+                    with open(meta_file, "r", encoding="utf-8") as mf:
+                        meta = json.load(mf)
+                except Exception:
+                    pass
+
+            if not meta:
+                meta = meta_map.get(ep_id, {
+                    "title": ep_id.replace("_", " ").title(),
+                    "studio_type": "entertainment",
+                    "language": "or",
+                    "channel_name": "AI Media Factory",
+                    "description": "Autonomously produced episode by AI Media Factory OS.",
+                    "views": "1.2K views",
+                    "duration": 15.0
+                })
+
+            localized_map = meta.get("localized_versions", {})
+            for f in os.listdir(ep_path):
+                if f.startswith("master_16x9_") and f.endswith(".mp4"):
+                    lang = f.replace("master_16x9_", "").replace(".mp4", "")
+                    if lang not in localized_map:
+                        soc = f"social_9x16_{lang}.mp4"
+                        localized_map[lang] = {
+                            "master_video_url": f"/media/output/{ep_id}/{f}",
+                            "social_video_url": f"/media/output/{ep_id}/{soc}" if os.path.exists(os.path.join(ep_path, soc)) else f"/media/output/{ep_id}/{f}"
+                        }
+
+            orig_lang = meta.get("language", "or")
+            all_langs = list(dict.fromkeys([orig_lang] + list(localized_map.keys()) + meta.get("available_languages", [])))
+
             episodes.append({
                 "id": ep_id,
-                "title": meta["title"],
-                "studio_type": meta["studio_type"],
-                "language": meta["language"],
-                "channel_name": meta["channel_name"],
-                "description": meta["description"],
-                "views": meta["views"],
-                "duration": meta["duration"],
+                "title": meta.get("title", ep_id),
+                "studio_type": meta.get("studio_type", "entertainment"),
+                "language": orig_lang,
+                "available_languages": all_langs,
+                "channel_name": meta.get("channel_name", "AI Media Factory"),
+                "description": meta.get("description", ""),
+                "views": meta.get("views", "1.5K views"),
+                "duration": meta.get("duration", 15.0),
                 "master_video_url": f"/media/output/{ep_id}/{master_file}",
-                "social_video_url": f"/media/output/{ep_id}/{social_file}" if social_file else f"/media/output/{ep_id}/{master_file}"
+                "social_video_url": f"/media/output/{ep_id}/{social_file}" if social_file else f"/media/output/{ep_id}/{master_file}",
+                "localized_versions": localized_map
             })
 
     return episodes
+
+@api_router.post("/episodes/{episode_id}/localize")
+async def localize_episode(episode_id: str, target_language: str = Query(..., regex="^(or|hi|bn|en|te|ta)$")):
+    """
+    Mode A Localization: Reuses approved visual video stream, synthesizes
+    culturally adapted dialogue tracks with Maya3 Indic TTS, and replaces the master audio.
+    """
+    engine = ModeALocalizationEngine()
+    try:
+        res = await engine.localize_episode(episode_id, target_language)
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 @api_router.post("/production/run", response_model=ProductionRunResponse)
 async def run_production(payload: EpisodeCreateRequest, db: Session = Depends(get_db)):
@@ -293,6 +335,34 @@ async def run_production(payload: EpisodeCreateRequest, db: Session = Depends(ge
 
     final_state = await orchestrator.run_pipeline(init_state)
     total_dur = sum(s.duration_seconds for s in final_state.scenes)
+
+    # Save metadata.json for instant UI playback
+    ep_dir = os.path.join("./storage/output", episode_id)
+    if os.path.exists(ep_dir):
+        ch_names = {
+            "entertainment": "Mo Gaon Comedy Studio",
+            "kids": "Little Friends Cartoon Studio",
+            "education": "AI Explainer Academy",
+            "podcast": "AI Frontier Podcast",
+            "news": "Odisha Factual Newsroom",
+            "marketing": "BhashaAI Brand Lab"
+        }
+        meta_payload = {
+            "id": episode_id,
+            "title": final_state.title,
+            "studio_type": final_state.studio_type,
+            "language": final_state.target_language,
+            "available_languages": [final_state.target_language, "hi", "en", "or"],
+            "channel_name": ch_names.get(final_state.studio_type, "AI Media Factory"),
+            "description": final_state.topic,
+            "views": "New Release",
+            "duration": round(total_dur, 1),
+            "master_video_url": f"/media/output/{episode_id}/{os.path.basename(final_state.master_video_path)}" if final_state.master_video_path else "",
+            "social_video_url": f"/media/output/{episode_id}/{os.path.basename(final_state.social_video_path)}" if final_state.social_video_path else "",
+            "localized_versions": {}
+        }
+        with open(os.path.join(ep_dir, "metadata.json"), "w", encoding="utf-8") as mf:
+            json.dump(meta_payload, mf, indent=2, ensure_ascii=False)
 
     return ProductionRunResponse(
         episode_id=final_state.episode_id,

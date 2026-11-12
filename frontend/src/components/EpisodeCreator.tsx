@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Sparkles, Sliders, DollarSign, Globe2 } from 'lucide-react';
 
 interface Props {
@@ -7,15 +7,58 @@ interface Props {
   isLoading: boolean;
 }
 
+const STUDIO_PRESETS: Record<string, { title: string; brief: string; language: string; budget: number }> = {
+  entertainment: {
+    title: 'Bikram Baboo Village Comedy',
+    brief: 'Village square market arrival and hilarious sweet shop incident with Tukuna',
+    language: 'or',
+    budget: 1.5
+  },
+  kids: {
+    title: 'Gulu Owl Counting Stars & Colors',
+    brief: 'Preschool rhyme teaching numbers 1 to 5 and primary colors with gentle forest animals',
+    language: 'en',
+    budget: 1.5
+  },
+  education: {
+    title: 'How Transformer Models Learn In 60 Seconds',
+    brief: 'Dr. Bhasha explains self-attention, query-key-value vectors, and token probability generation',
+    language: 'en',
+    budget: 1.8
+  },
+  podcast: {
+    title: 'The AI Frontier: Open Weights vs Frontier Labs',
+    brief: 'Aryan and Priya debate the open-source reasoning model explosion vs Big Tech compute clusters',
+    language: 'en',
+    budget: 2.0
+  },
+  news: {
+    title: 'Odisha Mega Semiconductor Fab Clearance',
+    brief: 'Factual breaking newsdesk report on the 20,000 engineering jobs and state investment',
+    language: 'or',
+    budget: 1.5
+  },
+  marketing: {
+    title: 'BhashaVoice AI: Scale Across 12 Indian Languages',
+    brief: 'Kinetic typography promo showcasing 12 Indic languages, instant voice cloning, and launch discount',
+    language: 'hi',
+    budget: 1.5
+  }
+};
+
 export const EpisodeCreator: React.FC<Props> = ({ selectedStudio, onTriggerRun, isLoading }) => {
-  const [title, setTitle] = useState(selectedStudio === 'kids' ? 'Gulu Owl Star Counting' : 'Bikram Baboo Village Comedy');
-  const [brief, setBrief] = useState(
-    selectedStudio === 'kids'
-      ? 'Preschool counting numbers 1 and 2 with joyful forest animation'
-      : 'Village square market arrival and hilarious sweet shop incident'
-  );
-  const [language, setLanguage] = useState(selectedStudio === 'kids' ? 'en' : 'or');
-  const [budget, setBudget] = useState(1.5);
+  const [title, setTitle] = useState(STUDIO_PRESETS[selectedStudio]?.title || 'Bikram Baboo Village Comedy');
+  const [brief, setBrief] = useState(STUDIO_PRESETS[selectedStudio]?.brief || 'Village market comedy');
+  const [language, setLanguage] = useState(STUDIO_PRESETS[selectedStudio]?.language || 'or');
+  const [budget, setBudget] = useState(STUDIO_PRESETS[selectedStudio]?.budget || 1.5);
+
+  useEffect(() => {
+    const preset = STUDIO_PRESETS[selectedStudio] || STUDIO_PRESETS.entertainment;
+    setTitle(preset.title);
+    setBrief(preset.brief);
+    setLanguage(preset.language);
+    setBudget(preset.budget);
+  }, [selectedStudio]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

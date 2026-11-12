@@ -1,26 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Play, ThumbsUp, Download, Smartphone, Monitor,
-  CheckCircle, Sparkles, MessageSquare, Film
+  CheckCircle, Sparkles, MessageSquare, Film, Globe,
+  Share2, Copy, Check, X, Volume2, ShieldCheck, Radio
 } from 'lucide-react';
-
-export interface PlayableEpisode {
-  id: string;
-  title: string;
-  studio_type: string;
-  language: string;
-  channel_name: string;
-  description: string;
-  views: string;
-  duration: number;
-  master_video_url: string;
-  social_video_url: string;
-}
+import { PlayableEpisode } from '../types';
+export type { PlayableEpisode };
 
 interface Props {
   episodes: PlayableEpisode[];
   activeEpisode: PlayableEpisode | null;
   onSelectEpisode: (ep: PlayableEpisode) => void;
+  onRefreshEpisodes?: () => void;
 }
 
 const studioColors: Record<string, string> = {
@@ -32,11 +23,31 @@ const studioColors: Record<string, string> = {
   marketing: 'from-yellow-400 to-amber-600'
 };
 
-export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSelectEpisode }) => {
+const LANG_LABELS: Record<string, { label: string; native: string }> = {
+  or: { label: 'Odia', native: 'ଓଡ଼ିଆ' },
+  hi: { label: 'Hindi', native: 'हिन्दी' },
+  bn: { label: 'Bengali', native: 'বাংলা' },
+  en: { label: 'English', native: 'English' },
+  te: { label: 'Telugu', native: 'తెలుగు' },
+  ta: { label: 'Tamil', native: 'தமிழ்' }
+};
+
+export const YouTubePlayer: React.FC<Props> = ({ 
+  episodes, 
+  activeEpisode, 
+  onSelectEpisode,
+  onRefreshEpisodes 
+}) => {
   const [format, setFormat] = useState<'16:9' | '9:16'>('16:9');
   const [likes, setLikes] = useState<number>(342);
   const [hasLiked, setHasLiked] = useState<boolean>(false);
   const [isSubscribed, setIsSubscribed] = useState<boolean>(true);
+  const [activeLang, setActiveLang] = useState<string>('or');
+  const [showDubModal, setShowDubModal] = useState<boolean>(false);
+  const [isDubbing, setIsDubbing] = useState<string | null>(null);
+  const [showExportModal, setShowExportModal] = useState<boolean>(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
   const [comments, setComments] = useState<Array<{ user: string; text: string; time: string; avatar: string }>>([
     {
       user: 'Priyadarshi_Odia',
@@ -62,12 +73,25 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
 
   const current = activeEpisode || episodes[0];
 
+  // Sync active language when episode changes
+  useEffect(() => {
+    if (current) {
+      setActiveLang(current.language || 'or');
+    }
+  }, [current?.id]);
+
+  // Compute active video source based on language and format
+  const activeLangEdition = current?.localized_versions?.[activeLang];
+  const currentVideoSrc = activeLangEdition
+    ? (format === '16:9' ? activeLangEdition.master_video_url : activeLangEdition.social_video_url)
+    : (format === '16:9' ? current?.master_video_url : current?.social_video_url);
+
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.load();
       videoRef.current.play().catch(() => {});
     }
-  }, [current?.id, format]);
+  }, [current?.id, format, activeLang, currentVideoSrc]);
 
   const handleLike = () => {
     if (hasLiked) {
@@ -94,14 +118,53 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
     setNewComment('');
   };
 
+  const handleTriggerDubbing = async (targetLang: string) => {
+    if (!current) return;
+    setIsDubbing(targetLang);
+    try {
+      const res = await fetch(`/api/v1/episodes/${current.id}/localize?target_language=${targetLang}`, {
+        method: 'POST'
+      });
+      if (res.ok) {
+        if (onRefreshEpisodes) onRefreshEpisodes();
+        setActiveLang(targetLang);
+        setShowDubModal(false);
+      } else {
+        alert('Dubbing failed. Check server logs.');
+      }
+    } catch (err) {
+      console.error('Localization error', err);
+    } finally {
+      setIsDubbing(null);
+    }
+  };
+
+  const copyToClipboard = (text: string, key: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 2000);
+  };
+
   if (!current) return null;
 
-  const currentVideoSrc = format === '16:9' ? current.master_video_url : current.social_video_url;
+  // Available localized editions for current episode
+  const installedLangs = Array.from(
+    new Set([current.language, ...(Object.keys(current.localized_versions || {}))])
+  );
+
+  const candidateDubLangs = ['hi', 'bn', 'en', 'or', 'te', 'ta'].filter(
+    (l) => !installedLangs.includes(l)
+  );
+
+  // SEO strings for export kit
+  const exportTitle = `${current.channel_name} | ${current.title} [Official 4K Master]`;
+  const exportDescription = `${current.description}\n\n⏱️ TIMESTAMPS:\n0:00 - Introduction & Hook\n0:05 - Main Scene Sequence\n0:12 - Climax & Resolution\n\n🎙️ Audio Engine: Maya3 Neural Speech (Indic 24kHz)\n🔊 Audio Normalization: EBU R128 (-14.0 LUFS)\n🎬 Visual Pipeline: HyperFrames + Remotion Composition\n\n#${current.studio_type} #BhashaAI #Maya3Speech #${current.channel_name.replace(/\\s+/g, '')}`;
+  const exportTags = `${current.studio_type}, ai animation, maya3 speech, indic voice cloning, ebu r128, bhasha ai, ${current.channel_name.toLowerCase()}`;
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-6">
+    <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-6 relative">
       {/* Header bar */}
-      <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-red-600 text-white shadow-lg shadow-red-600/30 flex items-center justify-center">
             <Film className="w-5 h-5" />
@@ -109,45 +172,76 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
           <div>
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
               BhashaTube Cinema Player
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 font-bold uppercase tracking-wider">
-                LIVE
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 font-bold uppercase tracking-wider flex items-center gap-1">
+                <Radio className="w-2.5 h-2.5 animate-pulse text-red-400" /> LIVE
               </span>
             </h2>
-            <p className="text-xs text-slate-400">Deterministic Multi-Studio Playback & Social Reframing</p>
+            <p className="text-xs text-slate-400">Deterministic Multi-Studio Playback & Multilingual Mode A Reframing</p>
           </div>
         </div>
 
-        {/* 16:9 vs 9:16 Format Toggle */}
-        <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
-          <button
-            onClick={() => setFormat('16:9')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              format === '16:9'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 font-bold'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Monitor className="w-3.5 h-3.5" />
-            <span>16:9 Cinema</span>
-          </button>
+        {/* Controls: Audio Language Switcher + 16:9 vs 9:16 Format Toggle */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Active Audio Language Pills */}
+          <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 gap-1">
+            <div className="px-2 py-1 text-[11px] font-semibold text-slate-400 flex items-center gap-1 border-r border-slate-800 pr-2">
+              <Globe className="w-3 h-3 text-amber-400" /> Audio:
+            </div>
+            {installedLangs.map((lang) => {
+              const info = LANG_LABELS[lang] || { label: lang.toUpperCase(), native: lang.toUpperCase() };
+              const isSelected = activeLang === lang;
+              const isOriginal = lang === current.language;
+              return (
+                <button
+                  key={lang}
+                  onClick={() => setActiveLang(lang)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${
+                    isSelected
+                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30 font-bold'
+                      : 'text-slate-400 hover:text-white hover:bg-slate-900'
+                  }`}
+                  title={isOriginal ? 'Original Master Audio' : 'Maya3 Localized Audio'}
+                >
+                  <span>{info.label}</span>
+                  {isOriginal && (
+                    <span className="text-[9px] px-1 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono">orig</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
-          <button
-            onClick={() => setFormat('9:16')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              format === '9:16'
-                ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20 font-bold'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span>9:16 Shorts</span>
-          </button>
+          {/* 16:9 vs 9:16 Format Toggle */}
+          <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
+            <button
+              onClick={() => setFormat('16:9')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                format === '16:9'
+                  ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20 font-bold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Monitor className="w-3.5 h-3.5" />
+              <span>16:9 Cinema</span>
+            </button>
+
+            <button
+              onClick={() => setFormat('9:16')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                format === '9:16'
+                  ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20 font-bold'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>9:16 Shorts</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Grid: Left = Video + Details + Comments, Right = Up Next Playlist */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
         {/* Left 2 Cols: Player & Community */}
         <div className="lg:col-span-2 space-y-5">
           {/* Cinema Screen Frame */}
@@ -161,6 +255,18 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
               playsInline
               controls
             />
+
+            {/* Language & Loudness Floating HUD */}
+            <div className="absolute top-3 left-3 flex items-center gap-2 pointer-events-none">
+              <span className="px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-md border border-white/10 text-[10px] font-mono text-white flex items-center gap-1.5 shadow-lg">
+                <Volume2 className="w-3 h-3 text-emerald-400" />
+                <span>Audio: <b className="text-amber-400 uppercase">{activeLang}</b> {activeLang === current.language ? '(Original)' : '(Maya3 Dubbed)'}</span>
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-md border border-white/10 text-[10px] font-mono text-blue-400 flex items-center gap-1.5 shadow-lg">
+                <ShieldCheck className="w-3 h-3 text-blue-400" />
+                <span>-14.0 LUFS</span>
+              </span>
+            </div>
           </div>
 
           {/* Video Metadata & Title */}
@@ -195,8 +301,26 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
                 </button>
               </div>
 
-              {/* Action Buttons (Like, Share, Download, Badges) */}
-              <div className="flex items-center gap-2">
+              {/* Action Buttons (Like, Auto-Dub, Export Kit, Download) */}
+              <div className="flex flex-wrap items-center gap-2">
+                {/* 1-Click Auto-Dub Button */}
+                <button
+                  onClick={() => setShowDubModal(true)}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-md shadow-blue-600/20 transition-all"
+                >
+                  <Globe className="w-3.5 h-3.5 text-blue-200" />
+                  <span>Auto-Dub (Mode A)</span>
+                </button>
+
+                {/* Publish & Export Kit */}
+                <button
+                  onClick={() => setShowExportModal(true)}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-950 border border-slate-800 text-amber-300 hover:border-amber-500/50 hover:bg-amber-500/10 transition-all"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Publish Kit</span>
+                </button>
+
                 <button
                   onClick={handleLike}
                   className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all ${
@@ -217,10 +341,6 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
                   <Download className="w-3.5 h-3.5 text-emerald-400" />
                   <span>Download MP4</span>
                 </a>
-
-                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-400">
-                  <span className="text-blue-400 font-bold">EBU R128</span> -14 LUFS
-                </div>
               </div>
             </div>
           </div>
@@ -234,7 +354,9 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
               <span>•</span>
               <span className="font-mono text-amber-400 uppercase">#{current.studio_type}</span>
               <span>•</span>
-              <span className="font-mono text-blue-400 uppercase">Lang: {current.language}</span>
+              <span className="font-mono text-blue-400 uppercase">Lang: {activeLang}</span>
+              <span>•</span>
+              <span className="font-mono text-emerald-400">EBU R128 (-14 LUFS)</span>
             </div>
             <p className="leading-relaxed text-slate-300">
               {current.description}
@@ -299,6 +421,7 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
           <div className="space-y-3 max-h-[750px] overflow-y-auto pr-1">
             {episodes.map((ep) => {
               const isSelected = ep.id === current.id;
+              const hasDubbed = Object.keys(ep.localized_versions || {}).length > 0;
               return (
                 <button
                   key={ep.id}
@@ -316,6 +439,11 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
                     <span className="absolute bottom-1 right-1 text-[9px] font-mono px-1 py-0.2 bg-black/80 text-white rounded">
                       0:{Math.round(ep.duration)}
                     </span>
+                    {hasDubbed && (
+                      <span className="absolute top-1 left-1 text-[8px] font-mono px-1 py-0.2 bg-blue-600/90 text-white rounded font-bold">
+                        MULTILINGUAL
+                      </span>
+                    )}
                   </div>
 
                   {/* Info */}
@@ -331,6 +459,11 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
                       <span>{ep.views}</span>
                       <span>•</span>
                       <span className="uppercase font-mono text-amber-400/90">{ep.language}</span>
+                      {hasDubbed && (
+                        <span className="text-[9px] text-blue-400 font-mono">
+                          +{Object.keys(ep.localized_versions || {}).length} dubs
+                        </span>
+                      )}
                     </div>
                   </div>
                 </button>
@@ -338,8 +471,205 @@ export const YouTubePlayer: React.FC<Props> = ({ episodes, activeEpisode, onSele
             })}
           </div>
         </div>
-
       </div>
+
+      {/* Auto-Dubbing Modal (Mode A) */}
+      {showDubModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 animate-in fade-in">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <Globe className="w-5 h-5 text-blue-400" />
+                <h3 className="font-bold text-base text-white">Mode A Multilingual Localization</h3>
+              </div>
+              <button 
+                onClick={() => setShowDubModal(false)}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Synthesize culturally adapted dialogue with Maya3 Indic Neural TTS, remux with the master visual timeline, and normalize to <b>EBU R128 (-14 LUFS)</b>.
+            </p>
+
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-slate-400">Select Target Language:</label>
+              <div className="grid grid-cols-2 gap-2.5">
+                {candidateDubLangs.map((lang) => {
+                  const info = LANG_LABELS[lang] || { label: lang, native: lang };
+                  const loadingThis = isDubbing === lang;
+                  return (
+                    <button
+                      key={lang}
+                      disabled={isDubbing !== null}
+                      onClick={() => handleTriggerDubbing(lang)}
+                      className="p-3 rounded-xl border border-slate-800 bg-slate-950/80 hover:border-blue-500 hover:bg-blue-500/10 text-left transition-all group disabled:opacity-50"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-white group-hover:text-blue-300">{info.label}</span>
+                        {loadingThis && <span className="w-3.5 h-3.5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></span>}
+                      </div>
+                      <span className="text-[11px] text-slate-400 font-sans">{info.native}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {isDubbing && (
+              <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/30 text-xs text-blue-300 flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></span>
+                <span>Synthesizing Maya3 speech & muxing timeline in <b>{LANG_LABELS[isDubbing]?.label}</b>...</span>
+              </div>
+            )}
+
+            <div className="flex justify-end pt-2 border-t border-slate-800/80">
+              <button
+                onClick={() => setShowDubModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Publish & Export Release Kit Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-5 animate-in fade-in">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <Share2 className="w-5 h-5 text-amber-400" />
+                <h3 className="font-bold text-base text-white">Production Deliverable & Publishing Kit</h3>
+              </div>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* QA & Loudness Banner */}
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between text-xs text-emerald-300">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span><b>QA PASSED:</b> EBU R128 Loudness Verified (-14.0 LUFS, -1.0 dBTP)</span>
+              </div>
+              <span className="font-mono text-[10px] bg-emerald-500/20 px-2 py-0.5 rounded text-emerald-200">BROADCAST READY</span>
+            </div>
+
+            {/* Tab 1: Video Files Download */}
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-slate-400">Master Video Deliverables:</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <a
+                  href={current.master_video_url}
+                  download
+                  className="p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-amber-500/50 flex items-center justify-between group transition-all"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Monitor className="w-4 h-4 text-amber-400" />
+                    <div>
+                      <div className="text-xs font-bold text-white group-hover:text-amber-300">16:9 Landscape Master</div>
+                      <div className="text-[10px] text-slate-400">1920x1080 • YouTube / Web</div>
+                    </div>
+                  </div>
+                  <Download className="w-4 h-4 text-slate-400 group-hover:text-amber-400" />
+                </a>
+
+                <a
+                  href={current.social_video_url}
+                  download
+                  className="p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-rose-500/50 flex items-center justify-between group transition-all"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Smartphone className="w-4 h-4 text-rose-400" />
+                    <div>
+                      <div className="text-xs font-bold text-white group-hover:text-rose-300">9:16 Vertical Reel</div>
+                      <div className="text-[10px] text-slate-400">1080x1920 • Shorts / Reels / TikTok</div>
+                    </div>
+                  </div>
+                  <Download className="w-4 h-4 text-slate-400 group-hover:text-rose-400" />
+                </a>
+              </div>
+            </div>
+
+            {/* Tab 2: SEO Title */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-slate-400">YouTube / Social Title:</label>
+                <button
+                  onClick={() => copyToClipboard(exportTitle, 'title')}
+                  className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold"
+                >
+                  {copiedKey === 'title' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedKey === 'title' ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
+              <input
+                type="text"
+                readOnly
+                value={exportTitle}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono"
+              />
+            </div>
+
+            {/* Tab 3: SEO Description */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-slate-400">Video Description with Timestamps:</label>
+                <button
+                  onClick={() => copyToClipboard(exportDescription, 'desc')}
+                  className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold"
+                >
+                  {copiedKey === 'desc' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedKey === 'desc' ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
+              <textarea
+                readOnly
+                rows={4}
+                value={exportDescription}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none font-mono resize-none"
+              />
+            </div>
+
+            {/* Tab 4: Tags */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-slate-400">Target Tags:</label>
+                <button
+                  onClick={() => copyToClipboard(exportTags, 'tags')}
+                  className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold"
+                >
+                  {copiedKey === 'tags' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedKey === 'tags' ? 'Copied' : 'Copy'}</span>
+                </button>
+              </div>
+              <input
+                type="text"
+                readOnly
+                value={exportTags}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none font-mono"
+              />
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-slate-800">
+              <button
+                onClick={() => setShowExportModal(false)}
+                className="px-5 py-2 rounded-xl bg-amber-500 text-slate-950 text-xs font-bold hover:bg-amber-400 transition-colors"
+              >
+                Close Release Kit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

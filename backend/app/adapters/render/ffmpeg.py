@@ -35,6 +35,10 @@ class FFmpegRenderer(BaseRenderEngine):
                 return c.replace('\\', '/')
         return None
 
+    def run_cmd(self, cmd: List[str], cwd: Optional[str] = None) -> subprocess.CompletedProcess:
+        """Executes an FFmpeg command with proper error handling."""
+        return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, check=True)
+
     def probe_media(self, file_path: str) -> Dict[str, Any]:
         """Inspect file streams, codec, duration, and metadata via ffprobe."""
         cmd = [

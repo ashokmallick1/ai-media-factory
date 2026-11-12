@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
-import { YouTubePlayer, PlayableEpisode } from './components/YouTubePlayer';
+import { YouTubePlayer } from './components/YouTubePlayer';
 import { StudioSelector } from './components/StudioSelector';
 import { EpisodeCreator } from './components/EpisodeCreator';
 import { ProductionMonitor } from './components/ProductionMonitor';
 import { CostLedger } from './components/CostLedger';
 import { CharacterVoiceLibrary } from './components/CharacterVoiceLibrary';
-import { Studio, Character, ProductionRunResponse } from './types';
+import { Studio, Character, ProductionRunResponse, PlayableEpisode } from './types';
 
 export const App: React.FC = () => {
   const [studios, setStudios] = useState<Studio[]>([]);
@@ -106,6 +106,7 @@ export const App: React.FC = () => {
             episodes={episodes}
             activeEpisode={activeEpisode}
             onSelectEpisode={setActiveEpisode}
+            onRefreshEpisodes={fetchEpisodes}
           />
         </section>
 
