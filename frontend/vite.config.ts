@@ -11,11 +11,11 @@ export default defineConfig({
     allowedHosts: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8088',
         changeOrigin: true
       },
       '/media': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8088',
         changeOrigin: true
       }
     }

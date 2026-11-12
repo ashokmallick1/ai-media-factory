@@ -112,13 +112,38 @@ class ModeALocalizationEngine:
             raise FileNotFoundError(f"Episode directory not found: {episode_dir}")
 
         # Find original master video
+        meta_file = os.path.join(episode_dir, "metadata.json")
+        orig_lang = None
+        if os.path.exists(meta_file):
+            try:
+                with open(meta_file, "r", encoding="utf-8") as mf:
+                    meta = json.load(mf)
+                    orig_lang = meta.get("language")
+            except Exception:
+                pass
+
         master_video = None
         social_video = None
-        for f in os.listdir(episode_dir):
-            if f.startswith("master_16x9") and f.endswith(".mp4"):
-                master_video = os.path.join(episode_dir, f)
-            elif f.startswith("social_9x16") and f.endswith(".mp4"):
-                social_video = os.path.join(episode_dir, f)
+        if orig_lang:
+            m_cand = os.path.join(episode_dir, f"master_16x9_{orig_lang}.mp4")
+            s_cand = os.path.join(episode_dir, f"social_9x16_{orig_lang}.mp4")
+            if os.path.exists(m_cand):
+                master_video = m_cand
+            if os.path.exists(s_cand):
+                social_video = s_cand
+
+        if not master_video:
+            for f in os.listdir(episode_dir):
+                if f.startswith("master_16x9_") and f.endswith(".mp4") and f != f"master_16x9_{target_language}.mp4":
+                    master_video = os.path.join(episode_dir, f)
+                    break
+
+        if not master_video:
+            # Fallback to any master
+            for f in os.listdir(episode_dir):
+                if f.startswith("master_16x9") and f.endswith(".mp4"):
+                    master_video = os.path.join(episode_dir, f)
+                    break
 
         if not master_video:
             raise FileNotFoundError(f"Master video not found in {episode_dir}")
@@ -165,8 +190,9 @@ class ModeALocalizationEngine:
         ]
         self.ffmpeg.run_cmd(concat_cmd, episode_dir)
 
-        # 3. Replace audio on Master 16:9
+        # 3. Replace audio on Master 16:9 using atomic temporary output
         localized_master_path = os.path.join(episode_dir, f"master_16x9_{target_language}.mp4")
+        tmp_master_path = os.path.join(episode_dir, f"tmp_master_16x9_{target_language}.mp4")
         mux_master_cmd = [
             "ffmpeg", "-y",
             "-i", os.path.abspath(master_video),
@@ -178,12 +204,17 @@ class ModeALocalizationEngine:
             "-b:a", "192k",
             "-af", "loudnorm=I=-14:TP=-1.0:LRA=11",
             "-shortest",
-            os.path.abspath(localized_master_path)
+            os.path.abspath(tmp_master_path)
         ]
         self.ffmpeg.run_cmd(mux_master_cmd, episode_dir)
+        if os.path.exists(tmp_master_path):
+            if os.path.exists(localized_master_path):
+                os.remove(localized_master_path)
+            os.replace(tmp_master_path, localized_master_path)
 
-        # 4. Replace audio on Social 9:16 (if exists)
+        # 4. Replace audio on Social 9:16 (if exists) using atomic temporary output
         localized_social_path = os.path.join(episode_dir, f"social_9x16_{target_language}.mp4")
+        tmp_social_path = os.path.join(episode_dir, f"tmp_social_9x16_{target_language}.mp4")
         if social_video and os.path.exists(social_video):
             mux_social_cmd = [
                 "ffmpeg", "-y",
@@ -196,9 +227,13 @@ class ModeALocalizationEngine:
                 "-b:a", "192k",
                 "-af", "loudnorm=I=-14:TP=-1.0:LRA=11",
                 "-shortest",
-                os.path.abspath(localized_social_path)
+                os.path.abspath(tmp_social_path)
             ]
             self.ffmpeg.run_cmd(mux_social_cmd, episode_dir)
+            if os.path.exists(tmp_social_path):
+                if os.path.exists(localized_social_path):
+                    os.remove(localized_social_path)
+                os.replace(tmp_social_path, localized_social_path)
         else:
             self.ffmpeg.reframe_aspect_ratio(localized_master_path, localized_social_path, target="9:16")
 
