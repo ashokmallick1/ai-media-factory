@@ -1,0 +1,11 @@
+tunnel: 51e58415-ca5c-4f54-bc0d-28ba7d0b14b1
+credentials-file: C:\Users\user\.cloudflared\51e58415-ca5c-4f54-bc0d-28ba7d0b14b1.json
+
+ingress:
+  - hostname: media.bhashaai.in
+    service: http://localhost:3000
+  - hostname: mediafactory.bhashaai.in
+    service: http://localhost:3000
+  - hostname: api.media.bhashaai.in
+    service: http://localhost:8000
+  - service: http_status:404
