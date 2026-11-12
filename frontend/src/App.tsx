@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
+import { YouTubePlayer, PlayableEpisode } from './components/YouTubePlayer';
 import { StudioSelector } from './components/StudioSelector';
 import { EpisodeCreator } from './components/EpisodeCreator';
 import { ProductionMonitor } from './components/ProductionMonitor';
@@ -11,11 +12,25 @@ export const App: React.FC = () => {
   const [studios, setStudios] = useState<Studio[]>([]);
   const [selectedStudio, setSelectedStudio] = useState<string>('entertainment');
   const [characters, setCharacters] = useState<Character[]>([]);
+  const [episodes, setEpisodes] = useState<PlayableEpisode[]>([]);
+  const [activeEpisode, setActiveEpisode] = useState<PlayableEpisode | null>(null);
   const [productionData, setProductionData] = useState<ProductionRunResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const fetchEpisodes = () => {
+    fetch('/api/v1/episodes')
+      .then((res) => res.json())
+      .then((data: PlayableEpisode[]) => {
+        setEpisodes(data);
+        if (data.length > 0 && !activeEpisode) {
+          setActiveEpisode(data[0]);
+        }
+      })
+      .catch((err) => console.error('Failed to load episodes', err));
+  };
+
   useEffect(() => {
-    // Fetch initial studios & characters
+    // Initial data fetch
     fetch('/api/v1/studios')
       .then((res) => res.json())
       .then((data) => setStudios(data))
@@ -25,7 +40,18 @@ export const App: React.FC = () => {
       .then((res) => res.json())
       .then((data) => setCharacters(data))
       .catch((err) => console.error('Failed to load characters', err));
+
+    fetchEpisodes();
   }, []);
+
+  const handleSelectStudio = (studioId: string) => {
+    setSelectedStudio(studioId);
+    // Find matching episode in playlist
+    const match = episodes.find((e) => e.studio_type === studioId);
+    if (match) {
+      setActiveEpisode(match);
+    }
+  };
 
   const handleTriggerRun = async (params: {
     title: string;
@@ -47,8 +73,21 @@ export const App: React.FC = () => {
           budget_limit_usd: params.budget_limit_usd
         })
       });
-      const data = await res.json();
+      const data: ProductionRunResponse = await res.json();
       setProductionData(data);
+
+      // Refresh episodes and set newly generated video active
+      fetch('/api/v1/episodes')
+        .then((r) => r.json())
+        .then((allEps: PlayableEpisode[]) => {
+          setEpisodes(allEps);
+          const newlyCreated = allEps.find((e) => e.id === data.episode_id);
+          if (newlyCreated) {
+            setActiveEpisode(newlyCreated);
+          } else if (allEps.length > 0) {
+            setActiveEpisode(allEps[0]);
+          }
+        });
     } catch (err) {
       console.error('Production execution failed', err);
     } finally {
@@ -61,16 +100,25 @@ export const App: React.FC = () => {
       <Header />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8 space-y-8">
+        {/* Cinema Video Player (YouTube style) */}
+        <section>
+          <YouTubePlayer
+            episodes={episodes}
+            activeEpisode={activeEpisode}
+            onSelectEpisode={setActiveEpisode}
+          />
+        </section>
+
         {/* Studio Selection */}
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-400">Production Studio Hub</h2>
-            <span className="text-xs text-slate-500">6 Autonomous Studios</span>
+            <span className="text-xs text-slate-500">6 Autonomous Studios Available</span>
           </div>
           <StudioSelector
             studios={studios}
             selectedStudio={selectedStudio}
-            onSelectStudio={setSelectedStudio}
+            onSelectStudio={handleSelectStudio}
           />
         </section>
 
