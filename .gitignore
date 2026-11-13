@@ -25,6 +25,9 @@ yarn-error.log*
 storage/output/
 storage/*.mp4
 storage/*.wav
+storage/*.jpg
+storage/*.png
+storage/qa_inspection_snapshots/
 *.mp4
 *.wav
 

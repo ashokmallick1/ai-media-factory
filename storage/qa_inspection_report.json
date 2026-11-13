@@ -1,0 +1,826 @@
+[
+  {
+    "file": "./storage/output\\ep_odia_pilot_01\\master_16x9_or.mp4",
+    "format": {
+      "duration_seconds": 25.39,
+      "file_size_bytes": 752694,
+      "bitrate_kbps": 237.1
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1920x1080",
+      "fps": "30/1",
+      "duration_seconds": 25.27,
+      "bitrate_kbps": 63.4,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 25.39,
+      "bitrate_kbps": 165.0,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 126.3,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_odia_pilot_01_master_16x9_or_t5.1s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_odia_pilot_01_master_16x9_or_t12.6s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_odia_pilot_01_master_16x9_or_t20.2s.jpg"
+    ],
+    "episode_id": "ep_odia_pilot_01",
+    "variant": "16:9 Landscape Master"
+  },
+  {
+    "file": "./storage/output\\ep_odia_pilot_01\\social_9x16_or.mp4",
+    "format": {
+      "duration_seconds": 25.39,
+      "file_size_bytes": 731415,
+      "bitrate_kbps": 230.4
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1080x1920",
+      "fps": "30/1",
+      "duration_seconds": 25.27,
+      "bitrate_kbps": 56.7,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 25.39,
+      "bitrate_kbps": 165.0,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 126.3,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_odia_pilot_01_social_9x16_or_t5.1s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_odia_pilot_01_social_9x16_or_t12.6s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_odia_pilot_01_social_9x16_or_t20.2s.jpg"
+    ],
+    "episode_id": "ep_odia_pilot_01",
+    "variant": "9:16 Social Reel"
+  },
+  {
+    "file": "./storage/output\\ep_studio1_entertainment\\master_16x9_bn.mp4",
+    "format": {
+      "duration_seconds": 22.7,
+      "file_size_bytes": 641773,
+      "bitrate_kbps": 226.2
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1920x1080",
+      "fps": "30/1",
+      "duration_seconds": 22.6,
+      "bitrate_kbps": 60.6,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 22.7,
+      "bitrate_kbps": 156.8,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 100.0,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_master_16x9_bn_t4.5s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_master_16x9_bn_t11.3s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_master_16x9_bn_t18.1s.jpg"
+    ],
+    "episode_id": "ep_studio1_entertainment",
+    "variant": "16:9 Landscape Master"
+  },
+  {
+    "file": "./storage/output\\ep_studio1_entertainment\\master_16x9_hi.mp4",
+    "format": {
+      "duration_seconds": 25.3,
+      "file_size_bytes": 777391,
+      "bitrate_kbps": 245.8
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1920x1080",
+      "fps": "30/1",
+      "duration_seconds": 25.27,
+      "bitrate_kbps": 63.7,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 25.29,
+      "bitrate_kbps": 173.2,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 1
+    },
+    "av_sync": {
+      "drift_ms": 24.3,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_master_16x9_hi_t5.1s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_master_16x9_hi_t12.6s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_master_16x9_hi_t20.2s.jpg"
+    ],
+    "episode_id": "ep_studio1_entertainment",
+    "variant": "16:9 Landscape Master"
+  },
+  {
+    "file": "./storage/output\\ep_studio1_entertainment\\master_16x9_or.mp4",
+    "format": {
+      "duration_seconds": 25.39,
+      "file_size_bytes": 753855,
+      "bitrate_kbps": 237.5
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1920x1080",
+      "fps": "30/1",
+      "duration_seconds": 25.27,
+      "bitrate_kbps": 63.7,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 25.39,
+      "bitrate_kbps": 165.1,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 126.3,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_master_16x9_or_t5.1s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_master_16x9_or_t12.6s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_master_16x9_or_t20.2s.jpg"
+    ],
+    "episode_id": "ep_studio1_entertainment",
+    "variant": "16:9 Landscape Master"
+  },
+  {
+    "file": "./storage/output\\ep_studio1_entertainment\\social_9x16_bn.mp4",
+    "format": {
+      "duration_seconds": 22.7,
+      "file_size_bytes": 622169,
+      "bitrate_kbps": 219.3
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1080x1920",
+      "fps": "30/1",
+      "duration_seconds": 22.6,
+      "bitrate_kbps": 53.6,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 22.7,
+      "bitrate_kbps": 156.8,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 100.0,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_social_9x16_bn_t4.5s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_social_9x16_bn_t11.3s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_social_9x16_bn_t18.1s.jpg"
+    ],
+    "episode_id": "ep_studio1_entertainment",
+    "variant": "9:16 Social Reel"
+  },
+  {
+    "file": "./storage/output\\ep_studio1_entertainment\\social_9x16_hi.mp4",
+    "format": {
+      "duration_seconds": 25.3,
+      "file_size_bytes": 752099,
+      "bitrate_kbps": 237.8
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1080x1920",
+      "fps": "30/1",
+      "duration_seconds": 25.27,
+      "bitrate_kbps": 55.7,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 25.29,
+      "bitrate_kbps": 173.2,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 1
+    },
+    "av_sync": {
+      "drift_ms": 24.3,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_social_9x16_hi_t5.1s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_social_9x16_hi_t12.6s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_social_9x16_hi_t20.2s.jpg"
+    ],
+    "episode_id": "ep_studio1_entertainment",
+    "variant": "9:16 Social Reel"
+  },
+  {
+    "file": "./storage/output\\ep_studio1_entertainment\\social_9x16_or.mp4",
+    "format": {
+      "duration_seconds": 25.39,
+      "file_size_bytes": 728563,
+      "bitrate_kbps": 229.5
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1080x1920",
+      "fps": "30/1",
+      "duration_seconds": 25.27,
+      "bitrate_kbps": 55.7,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 25.39,
+      "bitrate_kbps": 165.1,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 126.3,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_social_9x16_or_t5.1s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_social_9x16_or_t12.6s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio1_entertainment_social_9x16_or_t20.2s.jpg"
+    ],
+    "episode_id": "ep_studio1_entertainment",
+    "variant": "9:16 Social Reel"
+  },
+  {
+    "file": "./storage/output\\ep_studio2_kids\\master_16x9_en.mp4",
+    "format": {
+      "duration_seconds": 18.73,
+      "file_size_bytes": 493536,
+      "bitrate_kbps": 210.8
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1920x1080",
+      "fps": "30/1",
+      "duration_seconds": 18.53,
+      "bitrate_kbps": 44.6,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 18.73,
+      "bitrate_kbps": 157.4,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 195.7,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_master_16x9_en_t3.7s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_master_16x9_en_t9.3s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_master_16x9_en_t14.8s.jpg"
+    ],
+    "episode_id": "ep_studio2_kids",
+    "variant": "16:9 Landscape Master"
+  },
+  {
+    "file": "./storage/output\\ep_studio2_kids\\master_16x9_or.mp4",
+    "format": {
+      "duration_seconds": 18.57,
+      "file_size_bytes": 501142,
+      "bitrate_kbps": 215.9
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1920x1080",
+      "fps": "30/1",
+      "duration_seconds": 18.53,
+      "bitrate_kbps": 44.6,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 18.56,
+      "bitrate_kbps": 162.2,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 26.7,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_master_16x9_or_t3.7s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_master_16x9_or_t9.3s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_master_16x9_or_t14.8s.jpg"
+    ],
+    "episode_id": "ep_studio2_kids",
+    "variant": "16:9 Landscape Master"
+  },
+  {
+    "file": "./storage/output\\ep_studio2_kids\\social_9x16_en.mp4",
+    "format": {
+      "duration_seconds": 18.73,
+      "file_size_bytes": 509345,
+      "bitrate_kbps": 217.6
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1080x1920",
+      "fps": "30/1",
+      "duration_seconds": 18.53,
+      "bitrate_kbps": 51.5,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 18.73,
+      "bitrate_kbps": 157.4,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 195.7,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_social_9x16_en_t3.7s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_social_9x16_en_t9.3s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_social_9x16_en_t14.8s.jpg"
+    ],
+    "episode_id": "ep_studio2_kids",
+    "variant": "9:16 Social Reel"
+  },
+  {
+    "file": "./storage/output\\ep_studio2_kids\\social_9x16_or.mp4",
+    "format": {
+      "duration_seconds": 18.57,
+      "file_size_bytes": 516951,
+      "bitrate_kbps": 222.7
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1080x1920",
+      "fps": "30/1",
+      "duration_seconds": 18.53,
+      "bitrate_kbps": 51.5,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 18.56,
+      "bitrate_kbps": 162.2,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 26.7,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_social_9x16_or_t3.7s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_social_9x16_or_t9.3s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio2_kids_social_9x16_or_t14.8s.jpg"
+    ],
+    "episode_id": "ep_studio2_kids",
+    "variant": "9:16 Social Reel"
+  },
+  {
+    "file": "./storage/output\\ep_studio3_education\\master_16x9_en.mp4",
+    "format": {
+      "duration_seconds": 24.25,
+      "file_size_bytes": 695773,
+      "bitrate_kbps": 229.5
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1920x1080",
+      "fps": "30/1",
+      "duration_seconds": 24.13,
+      "bitrate_kbps": 47.5,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 1,
+      "black_segments": [
+        "[Parsed_blackdetect_0 @ 000001cdab6a69c0] black_start:0.0330078 black_end:24.133008 black_duration:24.1"
+      ]
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 24.25,
+      "bitrate_kbps": 173.1,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 116.7,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio3_education_master_16x9_en_t4.8s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio3_education_master_16x9_en_t12.1s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio3_education_master_16x9_en_t19.3s.jpg"
+    ],
+    "episode_id": "ep_studio3_education",
+    "variant": "16:9 Landscape Master"
+  },
+  {
+    "file": "./storage/output\\ep_studio3_education\\social_9x16_en.mp4",
+    "format": {
+      "duration_seconds": 24.25,
+      "file_size_bytes": 710952,
+      "bitrate_kbps": 234.5
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1080x1920",
+      "fps": "30/1",
+      "duration_seconds": 24.13,
+      "bitrate_kbps": 52.6,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 24.25,
+      "bitrate_kbps": 173.1,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 116.7,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio3_education_social_9x16_en_t4.8s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio3_education_social_9x16_en_t12.1s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio3_education_social_9x16_en_t19.3s.jpg"
+    ],
+    "episode_id": "ep_studio3_education",
+    "variant": "9:16 Social Reel"
+  },
+  {
+    "file": "./storage/output\\ep_studio4_podcast\\master_16x9_en.mp4",
+    "format": {
+      "duration_seconds": 24.09,
+      "file_size_bytes": 663733,
+      "bitrate_kbps": 220.5
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1920x1080",
+      "fps": "30/1",
+      "duration_seconds": 23.97,
+      "bitrate_kbps": 49.4,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 1,
+      "black_segments": [
+        "[Parsed_blackdetect_0 @ 000001916e5a7900] black_start:0.0330078 black_end:23.966341 black_duration:23.933333"
+      ]
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 24.09,
+      "bitrate_kbps": 162.2,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 118.3,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio4_podcast_master_16x9_en_t4.8s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio4_podcast_master_16x9_en_t12.0s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio4_podcast_master_16x9_en_t19.2s.jpg"
+    ],
+    "episode_id": "ep_studio4_podcast",
+    "variant": "16:9 Landscape Master"
+  },
+  {
+    "file": "./storage/output\\ep_studio4_podcast\\social_9x16_en.mp4",
+    "format": {
+      "duration_seconds": 24.09,
+      "file_size_bytes": 666402,
+      "bitrate_kbps": 221.3
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1080x1920",
+      "fps": "30/1",
+      "duration_seconds": 23.97,
+      "bitrate_kbps": 50.3,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 24.09,
+      "bitrate_kbps": 162.2,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 118.3,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio4_podcast_social_9x16_en_t4.8s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio4_podcast_social_9x16_en_t12.0s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio4_podcast_social_9x16_en_t19.2s.jpg"
+    ],
+    "episode_id": "ep_studio4_podcast",
+    "variant": "9:16 Social Reel"
+  },
+  {
+    "file": "./storage/output\\ep_studio5_news\\master_16x9_or.mp4",
+    "format": {
+      "duration_seconds": 23.0,
+      "file_size_bytes": 663194,
+      "bitrate_kbps": 230.7
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1920x1080",
+      "fps": "30/1",
+      "duration_seconds": 22.83,
+      "bitrate_kbps": 49.7,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 23.0,
+      "bitrate_kbps": 172.2,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 164.7,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio5_news_master_16x9_or_t4.6s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio5_news_master_16x9_or_t11.4s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio5_news_master_16x9_or_t18.3s.jpg"
+    ],
+    "episode_id": "ep_studio5_news",
+    "variant": "16:9 Landscape Master"
+  },
+  {
+    "file": "./storage/output\\ep_studio5_news\\social_9x16_or.mp4",
+    "format": {
+      "duration_seconds": 23.0,
+      "file_size_bytes": 672578,
+      "bitrate_kbps": 234.0
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1080x1920",
+      "fps": "30/1",
+      "duration_seconds": 22.83,
+      "bitrate_kbps": 53.0,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 23.0,
+      "bitrate_kbps": 172.2,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 164.7,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio5_news_social_9x16_or_t4.6s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio5_news_social_9x16_or_t11.4s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio5_news_social_9x16_or_t18.3s.jpg"
+    ],
+    "episode_id": "ep_studio5_news",
+    "variant": "9:16 Social Reel"
+  },
+  {
+    "file": "./storage/output\\ep_studio6_marketing\\master_16x9_hi.mp4",
+    "format": {
+      "duration_seconds": 22.18,
+      "file_size_bytes": 613937,
+      "bitrate_kbps": 221.5
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1920x1080",
+      "fps": "30/1",
+      "duration_seconds": 22.1,
+      "bitrate_kbps": 47.2,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 22.18,
+      "bitrate_kbps": 165.3,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 76.0,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio6_marketing_master_16x9_hi_t4.4s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio6_marketing_master_16x9_hi_t11.1s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio6_marketing_master_16x9_hi_t17.7s.jpg"
+    ],
+    "episode_id": "ep_studio6_marketing",
+    "variant": "16:9 Landscape Master"
+  },
+  {
+    "file": "./storage/output\\ep_studio6_marketing\\social_9x16_hi.mp4",
+    "format": {
+      "duration_seconds": 22.18,
+      "file_size_bytes": 624036,
+      "bitrate_kbps": 225.1
+    },
+    "video": {
+      "codec": "h264",
+      "resolution": "1080x1920",
+      "fps": "30/1",
+      "duration_seconds": 22.1,
+      "bitrate_kbps": 50.8,
+      "pix_fmt": "yuv420p",
+      "black_segments_count": 0,
+      "black_segments": []
+    },
+    "audio": {
+      "codec": "aac",
+      "sample_rate_hz": "96000",
+      "channels": 1,
+      "duration_seconds": 22.18,
+      "bitrate_kbps": 165.3,
+      "integrated_loudness_lufs": "-70.0",
+      "loudness_range_lra": "0.0",
+      "silence_intervals_gt_1_5s": 0
+    },
+    "av_sync": {
+      "drift_ms": 76.0,
+      "sync_healthy": true,
+      "video_start_time": "0.033008",
+      "audio_start_time": "0.000000"
+    },
+    "snapshots": [
+      "./storage/qa_inspection_snapshots\\ep_studio6_marketing_social_9x16_hi_t4.4s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio6_marketing_social_9x16_hi_t11.1s.jpg",
+      "./storage/qa_inspection_snapshots\\ep_studio6_marketing_social_9x16_hi_t17.7s.jpg"
+    ],
+    "episode_id": "ep_studio6_marketing",
+    "variant": "9:16 Social Reel"
+  }
+]

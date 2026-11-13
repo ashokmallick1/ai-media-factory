@@ -35,6 +35,22 @@ class FFmpegRenderer(BaseRenderEngine):
                 return c.replace('\\', '/')
         return None
 
+    def _infer_studio(self, spec: SceneRenderSpec) -> str:
+        t = (spec.title or "").lower()
+        s_id = (spec.scene_id or "").lower()
+        combined = f"{t} {s_id}"
+        if "kid" in combined or "owl" in combined or "rhyme" in combined:
+            return "kids"
+        if "neural" in combined or "tutorial" in combined or "tech" in combined or "education" in combined:
+            return "education"
+        if "podcast" in combined or "frontier" in combined or "alex" in combined:
+            return "podcast"
+        if "news" in combined or "fab" in combined or "semiconductor" in combined or "report" in combined:
+            return "news"
+        if "marketing" in combined or "bhasha" in combined or "voice" in combined or "promo" in combined:
+            return "marketing"
+        return "entertainment"
+
     def run_cmd(self, cmd: List[str], cwd: Optional[str] = None) -> subprocess.CompletedProcess:
         """Executes an FFmpeg command with proper error handling."""
         return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, check=True)
@@ -79,12 +95,35 @@ class FFmpegRenderer(BaseRenderEngine):
 
         font_clause = f"fontfile='{self.font_path}':" if self.font_path else ""
 
-        filter_complex = (
-            f"color=c={spec.background_color}:s={width}x{height}:d={dur}[bg];"
-            f"[bg]drawbox=x=0:y={height-180}:w={width}:h=180:color=black@0.6:t=fill[box];"
-            f"[box]drawtext={font_clause}textfile={title_txt_file}:fontsize=42:fontcolor=white:x=(w-text_w)/2:y=80[titled];"
-            f"[titled]drawtext={font_clause}textfile={dialogue_txt_file}:fontsize=32:fontcolor=yellow:x=(w-text_w)/2:y={height-120}[outv]"
-        )
+        # Generate center visual spotlight card
+        card_png_file = f"card_{spec.scene_id}.png"
+        full_card_path = os.path.join(output_dir, card_png_file)
+        has_card = False
+        try:
+            from backend.app.adapters.render.visual_card_generator import generate_scene_card
+            st = self._infer_studio(spec)
+            char = spec.character_names[0] if spec.character_names else (spec.title.split(":")[0] if ":" in spec.title else "Spotlight")
+            generate_scene_card(full_card_path, character_name=char, studio_type=st, scene_heading=spec.title)
+            if os.path.exists(full_card_path):
+                has_card = True
+        except Exception as e:
+            logger.warning(f"Could not generate visual card for scene {spec.scene_id}: {e}")
+
+        if has_card:
+            filter_complex = (
+                f"color=c={spec.background_color}:s={width}x{height}:d={dur}[bg];"
+                f"[bg][1:v]overlay=(W-w)/2:(H-h)/2-40:shortest=1[with_card];"
+                f"[with_card]drawbox=x=0:y={height-180}:w={width}:h=180:color=black@0.65:t=fill[box];"
+                f"[box]drawtext={font_clause}textfile={title_txt_file}:fontsize=42:fontcolor=white:x=(w-text_w)/2:y=80[titled];"
+                f"[titled]drawtext={font_clause}textfile={dialogue_txt_file}:fontsize=32:fontcolor=yellow:x=(w-text_w)/2:y={height-120}[outv]"
+            )
+        else:
+            filter_complex = (
+                f"color=c={spec.background_color}:s={width}x{height}:d={dur}[bg];"
+                f"[bg]drawbox=x=0:y={height-180}:w={width}:h=180:color=black@0.65:t=fill[box];"
+                f"[box]drawtext={font_clause}textfile={title_txt_file}:fontsize=42:fontcolor=white:x=(w-text_w)/2:y=80[titled];"
+                f"[titled]drawtext={font_clause}textfile={dialogue_txt_file}:fontsize=32:fontcolor=yellow:x=(w-text_w)/2:y={height-120}[outv]"
+            )
 
         cmd = [self.ffmpeg, "-y"]
 
@@ -93,6 +132,10 @@ class FFmpegRenderer(BaseRenderEngine):
             cmd.extend(["-i", norm_audio])
         else:
             cmd.extend(["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"])
+
+        if has_card:
+            norm_card = os.path.abspath(full_card_path).replace("\\", "/")
+            cmd.extend(["-loop", "1", "-i", norm_card])
 
         cmd.extend([
             "-filter_complex", filter_complex,
@@ -105,13 +148,14 @@ class FFmpegRenderer(BaseRenderEngine):
             "-b:a", "192k",
             "-r", str(spec.fps),
             "-t", str(dur),
+            "-movflags", "+faststart",
             out_filename
         ])
 
         try:
             subprocess.run(cmd, cwd=output_dir, capture_output=True, check=True)
         finally:
-            for p in [full_title_path, full_dial_path]:
+            for p in [full_title_path, full_dial_path, full_card_path]:
                 if os.path.exists(p):
                     try:
                         os.remove(p)
@@ -162,6 +206,25 @@ class FFmpegRenderer(BaseRenderEngine):
                     pass
         return output_path
 
+    def mix_audio_bed(self, input_video: str, bed_wav: str, output_video: str, vocal_vol: float = 1.0, bed_vol: float = 0.08) -> str:
+        """
+        Mixes a soft background ambience bed under dialogue.
+        """
+        cmd = [
+            self.ffmpeg, "-y",
+            "-i", os.path.abspath(input_video),
+            "-i", os.path.abspath(bed_wav),
+            "-filter_complex", f"[0:a]volume={vocal_vol}[vocal];[1:a]volume={bed_vol}[bgm];[vocal][bgm]amix=inputs=2:duration=first:dropout_transition=2[outa]",
+            "-map", "0:v",
+            "-map", "[outa]",
+            "-c:v", "copy",
+            "-c:a", "aac",
+            "-b:a", "192k",
+            os.path.abspath(output_video)
+        ]
+        subprocess.run(cmd, capture_output=True, check=True)
+        return output_video
+
     def normalize_loudness_ebur128(self, input_video: str, output_video: str) -> str:
         """
         Applies EBU R128 loudness normalization (-14 LUFS target for YouTube / Social).
@@ -173,6 +236,7 @@ class FFmpegRenderer(BaseRenderEngine):
             "-c:v", "copy",
             "-c:a", "aac",
             "-b:a", "192k",
+            "-movflags", "+faststart",
             os.path.abspath(output_video)
         ]
         subprocess.run(cmd, capture_output=True, check=True)
@@ -196,6 +260,7 @@ class FFmpegRenderer(BaseRenderEngine):
             "-c:v", "libx264",
             "-pix_fmt", "yuv420p",
             "-c:a", "copy",
+            "-movflags", "+faststart",
             os.path.abspath(output_video)
         ]
         subprocess.run(cmd, capture_output=True, check=True)

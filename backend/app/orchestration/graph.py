@@ -350,9 +350,25 @@ class ProductionOrchestrator:
         raw_concat_path = os.path.join(episode_dir, "raw_assembled.mp4")
         self.ffmpeg.concatenate_scenes(scene_paths, raw_concat_path)
 
+        # Generate studio-tailored ambient music bed and mix beneath speech
+        total_duration = sum(s.duration_seconds for s in state.scenes)
+        st = state.studio_type.lower()
+        bed_style = "kids" if "kid" in st else ("tech" if ("tech" in st or "edu" in st or "pod" in st) else ("news" if "news" in st else "acoustic"))
+        ambience_wav = os.path.join(episode_dir, "bg_ambience.wav")
+        assemble_input = raw_concat_path
+        try:
+            from backend.app.adapters.voice.ambience_generator import generate_ambient_bed
+            generate_ambient_bed(ambience_wav, duration_seconds=total_duration + 2.0, style=bed_style)
+            mixed_path = os.path.join(episode_dir, "mixed_raw.mp4")
+            self.ffmpeg.mix_audio_bed(raw_concat_path, ambience_wav, mixed_path, vocal_vol=1.0, bed_vol=0.07)
+            assemble_input = mixed_path
+        except Exception as e:
+            logger.warning(f"Could not mix ambient bed: {e}")
+            assemble_input = raw_concat_path
+
         # Normalize Audio to -14 LUFS
         master_output_path = os.path.join(episode_dir, f"master_16x9_{state.target_language}.mp4")
-        self.ffmpeg.normalize_loudness_ebur128(raw_concat_path, master_output_path)
+        self.ffmpeg.normalize_loudness_ebur128(assemble_input, master_output_path)
         state.master_video_path = master_output_path
 
         # Generate 9:16 Social Reel crop

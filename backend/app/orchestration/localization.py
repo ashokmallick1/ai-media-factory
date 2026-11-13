@@ -203,6 +203,7 @@ class ModeALocalizationEngine:
             "-c:a", "aac",
             "-b:a", "192k",
             "-af", "loudnorm=I=-14:TP=-1.0:LRA=11",
+            "-movflags", "+faststart",
             "-shortest",
             os.path.abspath(tmp_master_path)
         ]
@@ -226,6 +227,7 @@ class ModeALocalizationEngine:
                 "-c:a", "aac",
                 "-b:a", "192k",
                 "-af", "loudnorm=I=-14:TP=-1.0:LRA=11",
+                "-movflags", "+faststart",
                 "-shortest",
                 os.path.abspath(tmp_social_path)
             ]
