@@ -113,16 +113,20 @@ class FFmpegRenderer(BaseRenderEngine):
             filter_complex = (
                 f"color=c={spec.background_color}:s={width}x{height}:d={dur}[bg];"
                 f"[bg][1:v]overlay=(W-w)/2:(H-h)/2-40:shortest=1[with_card];"
-                f"[with_card]drawbox=x=0:y={height-180}:w={width}:h=180:color=black@0.65:t=fill[box];"
-                f"[box]drawtext={font_clause}textfile={title_txt_file}:fontsize=42:fontcolor=white:x=(w-text_w)/2:y=80[titled];"
-                f"[titled]drawtext={font_clause}textfile={dialogue_txt_file}:fontsize=32:fontcolor=yellow:x=(w-text_w)/2:y={height-120}[outv]"
+                f"[0:a]showwaves=s=1100x70:mode=line:colors=0xfca311@0.85:scale=sqrt[wave];"
+                f"[with_card][wave]overlay=(W-w)/2:{height-250}:shortest=1[with_wave];"
+                f"[with_wave]drawbox=x=0:y={height-170}:w={width}:h=170:color=black@0.65:t=fill[box];"
+                f"[box]drawtext={font_clause}textfile={title_txt_file}:fontsize=40:fontcolor=white:x=(w-text_w)/2:y=75[titled];"
+                f"[titled]drawtext={font_clause}textfile={dialogue_txt_file}:fontsize=32:fontcolor=yellow:x=(w-text_w)/2:y={height-115}[outv]"
             )
         else:
             filter_complex = (
                 f"color=c={spec.background_color}:s={width}x{height}:d={dur}[bg];"
-                f"[bg]drawbox=x=0:y={height-180}:w={width}:h=180:color=black@0.65:t=fill[box];"
-                f"[box]drawtext={font_clause}textfile={title_txt_file}:fontsize=42:fontcolor=white:x=(w-text_w)/2:y=80[titled];"
-                f"[titled]drawtext={font_clause}textfile={dialogue_txt_file}:fontsize=32:fontcolor=yellow:x=(w-text_w)/2:y={height-120}[outv]"
+                f"[0:a]showwaves=s=1100x70:mode=line:colors=0xfca311@0.85:scale=sqrt[wave];"
+                f"[bg][wave]overlay=(W-w)/2:{height-250}:shortest=1[with_wave];"
+                f"[with_wave]drawbox=x=0:y={height-170}:w={width}:h=170:color=black@0.65:t=fill[box];"
+                f"[box]drawtext={font_clause}textfile={title_txt_file}:fontsize=40:fontcolor=white:x=(w-text_w)/2:y=75[titled];"
+                f"[titled]drawtext={font_clause}textfile={dialogue_txt_file}:fontsize=32:fontcolor=yellow:x=(w-text_w)/2:y={height-115}[outv]"
             )
 
         cmd = [self.ffmpeg, "-y"]
@@ -144,6 +148,10 @@ class FFmpegRenderer(BaseRenderEngine):
             "-shortest",
             "-c:v", "libx264",
             "-pix_fmt", "yuv420p",
+            "-profile:v", "high",
+            "-level", "4.1",
+            "-g", "30",
+            "-keyint_min", "30",
             "-c:a", "aac",
             "-b:a", "192k",
             "-r", str(spec.fps),
@@ -191,6 +199,10 @@ class FFmpegRenderer(BaseRenderEngine):
             "-i", os.path.abspath(concat_list_file),
             "-c:v", "libx264",
             "-pix_fmt", "yuv420p",
+            "-profile:v", "high",
+            "-level", "4.1",
+            "-g", "30",
+            "-keyint_min", "30",
             "-c:a", "aac",
             "-b:a", "192k",
             "-movflags", "+faststart",
@@ -259,6 +271,10 @@ class FFmpegRenderer(BaseRenderEngine):
             "-map", "0:a?",
             "-c:v", "libx264",
             "-pix_fmt", "yuv420p",
+            "-profile:v", "high",
+            "-level", "4.1",
+            "-g", "30",
+            "-keyint_min", "30",
             "-c:a", "copy",
             "-movflags", "+faststart",
             os.path.abspath(output_video)

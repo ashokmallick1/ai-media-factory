@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { 
   Play, ThumbsUp, Download, Smartphone, Monitor,
   CheckCircle, Sparkles, MessageSquare, Film, Globe,
@@ -80,11 +80,14 @@ export const YouTubePlayer: React.FC<Props> = ({
     }
   }, [current?.id]);
 
-  // Compute active video source based on language and format
+  // Compute active video source based on language and format with cache-busting
   const activeLangEdition = current?.localized_versions?.[activeLang];
-  const currentVideoSrc = activeLangEdition
-    ? (format === '16:9' ? activeLangEdition.master_video_url : activeLangEdition.social_video_url)
-    : (format === '16:9' ? current?.master_video_url : current?.social_video_url);
+  const currentVideoSrc = useMemo(() => {
+    const raw = activeLangEdition
+      ? (format === '16:9' ? activeLangEdition.master_video_url : activeLangEdition.social_video_url)
+      : (format === '16:9' ? current?.master_video_url : current?.social_video_url);
+    return raw ? `${raw}?v=live_${activeLang}_${format === '16:9' ? '16x9' : '9x16'}` : '';
+  }, [current?.id, format, activeLang, activeLangEdition]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -253,6 +256,7 @@ export const YouTubePlayer: React.FC<Props> = ({
                 format === '9:16' ? 'h-full object-contain' : 'w-full h-full object-contain'
               }`}
               playsInline
+              preload="auto"
               controls
             />
 

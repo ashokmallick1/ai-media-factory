@@ -20,6 +20,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class MediaNoCacheMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        if request.url.path.startswith("/media"):
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
+
+app.add_middleware(MediaNoCacheMiddleware)
+
 # Mount API routes
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
